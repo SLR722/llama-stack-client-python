@@ -46,7 +46,7 @@ class TrainingConfigDataConfig(TypedDict, total=False):
 
     shuffle: Required[bool]
 
-    data_format: Required[Literal["instruct", "chat"]]
+    data_format: Required[Literal["instruct", "dialog"]]
 
     packed: bool
 
