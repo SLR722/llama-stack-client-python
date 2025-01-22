@@ -11,6 +11,7 @@ from tests.utils import assert_matches_type
 from llama_stack_client import LlamaStackClient, AsyncLlamaStackClient
 from llama_stack_client.types import (
     MemoryBankListResponse,
+    MemoryBankRegisterResponse,
     MemoryBankRetrieveResponse,
 )
 
@@ -60,17 +61,18 @@ class TestMemoryBanks:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip(
-        reason="currently no good way to test endpoints with content type application/jsonl, Prism mock server will fail"
-    )
+    @parametrize
+    def test_path_params_retrieve(self, client: LlamaStackClient) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `memory_bank_id` but received ''"):
+            client.memory_banks.with_raw_response.retrieve(
+                memory_bank_id="",
+            )
+
     @parametrize
     def test_method_list(self, client: LlamaStackClient) -> None:
         memory_bank = client.memory_banks.list()
         assert_matches_type(MemoryBankListResponse, memory_bank, path=["response"])
 
-    @pytest.mark.skip(
-        reason="currently no good way to test endpoints with content type application/jsonl, Prism mock server will fail"
-    )
     @parametrize
     def test_method_list_with_all_params(self, client: LlamaStackClient) -> None:
         memory_bank = client.memory_banks.list(
@@ -79,9 +81,6 @@ class TestMemoryBanks:
         )
         assert_matches_type(MemoryBankListResponse, memory_bank, path=["response"])
 
-    @pytest.mark.skip(
-        reason="currently no good way to test endpoints with content type application/jsonl, Prism mock server will fail"
-    )
     @parametrize
     def test_raw_response_list(self, client: LlamaStackClient) -> None:
         response = client.memory_banks.with_raw_response.list()
@@ -91,9 +90,6 @@ class TestMemoryBanks:
         memory_bank = response.parse()
         assert_matches_type(MemoryBankListResponse, memory_bank, path=["response"])
 
-    @pytest.mark.skip(
-        reason="currently no good way to test endpoints with content type application/jsonl, Prism mock server will fail"
-    )
     @parametrize
     def test_streaming_response_list(self, client: LlamaStackClient) -> None:
         with client.memory_banks.with_streaming_response.list() as response:
@@ -115,7 +111,7 @@ class TestMemoryBanks:
                 "memory_bank_type": "vector",
             },
         )
-        assert memory_bank is None
+        assert_matches_type(MemoryBankRegisterResponse, memory_bank, path=["response"])
 
     @parametrize
     def test_method_register_with_all_params(self, client: LlamaStackClient) -> None:
@@ -132,7 +128,7 @@ class TestMemoryBanks:
             x_llama_stack_client_version="X-LlamaStack-Client-Version",
             x_llama_stack_provider_data="X-LlamaStack-Provider-Data",
         )
-        assert memory_bank is None
+        assert_matches_type(MemoryBankRegisterResponse, memory_bank, path=["response"])
 
     @parametrize
     def test_raw_response_register(self, client: LlamaStackClient) -> None:
@@ -148,7 +144,7 @@ class TestMemoryBanks:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         memory_bank = response.parse()
-        assert memory_bank is None
+        assert_matches_type(MemoryBankRegisterResponse, memory_bank, path=["response"])
 
     @parametrize
     def test_streaming_response_register(self, client: LlamaStackClient) -> None:
@@ -164,7 +160,7 @@ class TestMemoryBanks:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             memory_bank = response.parse()
-            assert memory_bank is None
+            assert_matches_type(MemoryBankRegisterResponse, memory_bank, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -207,6 +203,13 @@ class TestMemoryBanks:
             assert memory_bank is None
 
         assert cast(Any, response.is_closed) is True
+
+    @parametrize
+    def test_path_params_unregister(self, client: LlamaStackClient) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `memory_bank_id` but received ''"):
+            client.memory_banks.with_raw_response.unregister(
+                memory_bank_id="",
+            )
 
 
 class TestAsyncMemoryBanks:
@@ -252,17 +255,18 @@ class TestAsyncMemoryBanks:
 
         assert cast(Any, response.is_closed) is True
 
-    @pytest.mark.skip(
-        reason="currently no good way to test endpoints with content type application/jsonl, Prism mock server will fail"
-    )
+    @parametrize
+    async def test_path_params_retrieve(self, async_client: AsyncLlamaStackClient) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `memory_bank_id` but received ''"):
+            await async_client.memory_banks.with_raw_response.retrieve(
+                memory_bank_id="",
+            )
+
     @parametrize
     async def test_method_list(self, async_client: AsyncLlamaStackClient) -> None:
         memory_bank = await async_client.memory_banks.list()
         assert_matches_type(MemoryBankListResponse, memory_bank, path=["response"])
 
-    @pytest.mark.skip(
-        reason="currently no good way to test endpoints with content type application/jsonl, Prism mock server will fail"
-    )
     @parametrize
     async def test_method_list_with_all_params(self, async_client: AsyncLlamaStackClient) -> None:
         memory_bank = await async_client.memory_banks.list(
@@ -271,9 +275,6 @@ class TestAsyncMemoryBanks:
         )
         assert_matches_type(MemoryBankListResponse, memory_bank, path=["response"])
 
-    @pytest.mark.skip(
-        reason="currently no good way to test endpoints with content type application/jsonl, Prism mock server will fail"
-    )
     @parametrize
     async def test_raw_response_list(self, async_client: AsyncLlamaStackClient) -> None:
         response = await async_client.memory_banks.with_raw_response.list()
@@ -283,9 +284,6 @@ class TestAsyncMemoryBanks:
         memory_bank = await response.parse()
         assert_matches_type(MemoryBankListResponse, memory_bank, path=["response"])
 
-    @pytest.mark.skip(
-        reason="currently no good way to test endpoints with content type application/jsonl, Prism mock server will fail"
-    )
     @parametrize
     async def test_streaming_response_list(self, async_client: AsyncLlamaStackClient) -> None:
         async with async_client.memory_banks.with_streaming_response.list() as response:
@@ -307,7 +305,7 @@ class TestAsyncMemoryBanks:
                 "memory_bank_type": "vector",
             },
         )
-        assert memory_bank is None
+        assert_matches_type(MemoryBankRegisterResponse, memory_bank, path=["response"])
 
     @parametrize
     async def test_method_register_with_all_params(self, async_client: AsyncLlamaStackClient) -> None:
@@ -324,7 +322,7 @@ class TestAsyncMemoryBanks:
             x_llama_stack_client_version="X-LlamaStack-Client-Version",
             x_llama_stack_provider_data="X-LlamaStack-Provider-Data",
         )
-        assert memory_bank is None
+        assert_matches_type(MemoryBankRegisterResponse, memory_bank, path=["response"])
 
     @parametrize
     async def test_raw_response_register(self, async_client: AsyncLlamaStackClient) -> None:
@@ -340,7 +338,7 @@ class TestAsyncMemoryBanks:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         memory_bank = await response.parse()
-        assert memory_bank is None
+        assert_matches_type(MemoryBankRegisterResponse, memory_bank, path=["response"])
 
     @parametrize
     async def test_streaming_response_register(self, async_client: AsyncLlamaStackClient) -> None:
@@ -356,7 +354,7 @@ class TestAsyncMemoryBanks:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             memory_bank = await response.parse()
-            assert memory_bank is None
+            assert_matches_type(MemoryBankRegisterResponse, memory_bank, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -399,3 +397,10 @@ class TestAsyncMemoryBanks:
             assert memory_bank is None
 
         assert cast(Any, response.is_closed) is True
+
+    @parametrize
+    async def test_path_params_unregister(self, async_client: AsyncLlamaStackClient) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `memory_bank_id` but received ''"):
+            await async_client.memory_banks.with_raw_response.unregister(
+                memory_bank_id="",
+            )

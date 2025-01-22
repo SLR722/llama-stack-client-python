@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Optional
+from typing import Type, Optional, cast
 
 import httpx
 
-from ..types import scoring_function_register_params, scoring_function_retrieve_params
+from ..types import scoring_function_register_params
 from .._types import NOT_GIVEN, Body, Query, Headers, NoneType, NotGiven
 from .._utils import (
     maybe_transform,
@@ -21,9 +21,11 @@ from .._response import (
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
+from .._wrappers import DataWrapper
 from .._base_client import make_request_options
 from ..types.scoring_fn import ScoringFn
 from ..types.shared_params.return_type import ReturnType
+from ..types.scoring_function_list_response import ScoringFunctionListResponse
 
 __all__ = ["ScoringFunctionsResource", "AsyncScoringFunctionsResource"]
 
@@ -32,7 +34,7 @@ class ScoringFunctionsResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> ScoringFunctionsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -50,8 +52,8 @@ class ScoringFunctionsResource(SyncAPIResource):
 
     def retrieve(
         self,
-        *,
         scoring_fn_id: str,
+        *,
         x_llama_stack_client_version: str | NotGiven = NOT_GIVEN,
         x_llama_stack_provider_data: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -71,6 +73,8 @@ class ScoringFunctionsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        if not scoring_fn_id:
+            raise ValueError(f"Expected a non-empty value for `scoring_fn_id` but received {scoring_fn_id!r}")
         extra_headers = {
             **strip_not_given(
                 {
@@ -81,15 +85,9 @@ class ScoringFunctionsResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._get(
-            "/alpha/scoring-functions/get",
+            f"/v1/scoring-functions/{scoring_fn_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform(
-                    {"scoring_fn_id": scoring_fn_id}, scoring_function_retrieve_params.ScoringFunctionRetrieveParams
-                ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ScoringFn,
         )
@@ -105,7 +103,7 @@ class ScoringFunctionsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> ScoringFn:
+    ) -> ScoringFunctionListResponse:
         """
         Args:
           extra_headers: Send extra headers
@@ -116,7 +114,6 @@ class ScoringFunctionsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "application/jsonl", **(extra_headers or {})}
         extra_headers = {
             **strip_not_given(
                 {
@@ -127,11 +124,15 @@ class ScoringFunctionsResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._get(
-            "/alpha/scoring-functions/list",
+            "/v1/scoring-functions",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                post_parser=DataWrapper[ScoringFunctionListResponse]._unwrapper,
             ),
-            cast_to=ScoringFn,
+            cast_to=cast(Type[ScoringFunctionListResponse], DataWrapper[ScoringFunctionListResponse]),
         )
 
     def register(
@@ -173,7 +174,7 @@ class ScoringFunctionsResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._post(
-            "/alpha/scoring-functions/register",
+            "/v1/scoring-functions",
             body=maybe_transform(
                 {
                     "description": description,
@@ -196,7 +197,7 @@ class AsyncScoringFunctionsResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncScoringFunctionsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -214,8 +215,8 @@ class AsyncScoringFunctionsResource(AsyncAPIResource):
 
     async def retrieve(
         self,
-        *,
         scoring_fn_id: str,
+        *,
         x_llama_stack_client_version: str | NotGiven = NOT_GIVEN,
         x_llama_stack_provider_data: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -235,6 +236,8 @@ class AsyncScoringFunctionsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        if not scoring_fn_id:
+            raise ValueError(f"Expected a non-empty value for `scoring_fn_id` but received {scoring_fn_id!r}")
         extra_headers = {
             **strip_not_given(
                 {
@@ -245,15 +248,9 @@ class AsyncScoringFunctionsResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._get(
-            "/alpha/scoring-functions/get",
+            f"/v1/scoring-functions/{scoring_fn_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform(
-                    {"scoring_fn_id": scoring_fn_id}, scoring_function_retrieve_params.ScoringFunctionRetrieveParams
-                ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ScoringFn,
         )
@@ -269,7 +266,7 @@ class AsyncScoringFunctionsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> ScoringFn:
+    ) -> ScoringFunctionListResponse:
         """
         Args:
           extra_headers: Send extra headers
@@ -280,7 +277,6 @@ class AsyncScoringFunctionsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "application/jsonl", **(extra_headers or {})}
         extra_headers = {
             **strip_not_given(
                 {
@@ -291,11 +287,15 @@ class AsyncScoringFunctionsResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._get(
-            "/alpha/scoring-functions/list",
+            "/v1/scoring-functions",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                post_parser=DataWrapper[ScoringFunctionListResponse]._unwrapper,
             ),
-            cast_to=ScoringFn,
+            cast_to=cast(Type[ScoringFunctionListResponse], DataWrapper[ScoringFunctionListResponse]),
         )
 
     async def register(
@@ -337,7 +337,7 @@ class AsyncScoringFunctionsResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._post(
-            "/alpha/scoring-functions/register",
+            "/v1/scoring-functions",
             body=await async_maybe_transform(
                 {
                     "description": description,

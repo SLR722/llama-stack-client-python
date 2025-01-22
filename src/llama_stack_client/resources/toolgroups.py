@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing import Dict, Union, Iterable
+from typing import Dict, Type, Union, Iterable, cast
 
 import httpx
 
-from ..types import toolgroup_get_params, toolgroup_register_params, toolgroup_unregister_params
+from ..types import toolgroup_register_params
 from .._types import NOT_GIVEN, Body, Query, Headers, NoneType, NotGiven
 from .._utils import (
     maybe_transform,
@@ -21,9 +21,11 @@ from .._response import (
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
+from .._wrappers import DataWrapper
 from .._base_client import make_request_options
 from ..types.tool_group import ToolGroup
 from ..types.shared_params.url import URL
+from ..types.toolgroup_list_response import ToolgroupListResponse
 
 __all__ = ["ToolgroupsResource", "AsyncToolgroupsResource"]
 
@@ -32,7 +34,7 @@ class ToolgroupsResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> ToolgroupsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -59,7 +61,7 @@ class ToolgroupsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> ToolGroup:
+    ) -> ToolgroupListResponse:
         """
         List tool groups with optional provider
 
@@ -72,7 +74,6 @@ class ToolgroupsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "application/jsonl", **(extra_headers or {})}
         extra_headers = {
             **strip_not_given(
                 {
@@ -83,17 +84,21 @@ class ToolgroupsResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._get(
-            "/alpha/toolgroups/list",
+            "/v1/toolgroups",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                post_parser=DataWrapper[ToolgroupListResponse]._unwrapper,
             ),
-            cast_to=ToolGroup,
+            cast_to=cast(Type[ToolgroupListResponse], DataWrapper[ToolgroupListResponse]),
         )
 
     def get(
         self,
-        *,
         toolgroup_id: str,
+        *,
         x_llama_stack_client_version: str | NotGiven = NOT_GIVEN,
         x_llama_stack_provider_data: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -113,6 +118,8 @@ class ToolgroupsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        if not toolgroup_id:
+            raise ValueError(f"Expected a non-empty value for `toolgroup_id` but received {toolgroup_id!r}")
         extra_headers = {
             **strip_not_given(
                 {
@@ -123,13 +130,9 @@ class ToolgroupsResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._get(
-            "/alpha/toolgroups/get",
+            f"/v1/toolgroups/{toolgroup_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform({"toolgroup_id": toolgroup_id}, toolgroup_get_params.ToolgroupGetParams),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ToolGroup,
         )
@@ -173,7 +176,7 @@ class ToolgroupsResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._post(
-            "/alpha/toolgroups/register",
+            "/v1/toolgroups",
             body=maybe_transform(
                 {
                     "provider_id": provider_id,
@@ -191,8 +194,8 @@ class ToolgroupsResource(SyncAPIResource):
 
     def unregister(
         self,
+        toolgroup_id: str,
         *,
-        tool_group_id: str,
         x_llama_stack_client_version: str | NotGiven = NOT_GIVEN,
         x_llama_stack_provider_data: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -214,6 +217,8 @@ class ToolgroupsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        if not toolgroup_id:
+            raise ValueError(f"Expected a non-empty value for `toolgroup_id` but received {toolgroup_id!r}")
         extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         extra_headers = {
             **strip_not_given(
@@ -224,11 +229,8 @@ class ToolgroupsResource(SyncAPIResource):
             ),
             **(extra_headers or {}),
         }
-        return self._post(
-            "/alpha/toolgroups/unregister",
-            body=maybe_transform(
-                {"tool_group_id": tool_group_id}, toolgroup_unregister_params.ToolgroupUnregisterParams
-            ),
+        return self._delete(
+            f"/v1/toolgroups/{toolgroup_id}",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -240,7 +242,7 @@ class AsyncToolgroupsResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncToolgroupsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -267,7 +269,7 @@ class AsyncToolgroupsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = NOT_GIVEN,
-    ) -> ToolGroup:
+    ) -> ToolgroupListResponse:
         """
         List tool groups with optional provider
 
@@ -280,7 +282,6 @@ class AsyncToolgroupsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "application/jsonl", **(extra_headers or {})}
         extra_headers = {
             **strip_not_given(
                 {
@@ -291,17 +292,21 @@ class AsyncToolgroupsResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._get(
-            "/alpha/toolgroups/list",
+            "/v1/toolgroups",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                post_parser=DataWrapper[ToolgroupListResponse]._unwrapper,
             ),
-            cast_to=ToolGroup,
+            cast_to=cast(Type[ToolgroupListResponse], DataWrapper[ToolgroupListResponse]),
         )
 
     async def get(
         self,
-        *,
         toolgroup_id: str,
+        *,
         x_llama_stack_client_version: str | NotGiven = NOT_GIVEN,
         x_llama_stack_provider_data: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -321,6 +326,8 @@ class AsyncToolgroupsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        if not toolgroup_id:
+            raise ValueError(f"Expected a non-empty value for `toolgroup_id` but received {toolgroup_id!r}")
         extra_headers = {
             **strip_not_given(
                 {
@@ -331,15 +338,9 @@ class AsyncToolgroupsResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._get(
-            "/alpha/toolgroups/get",
+            f"/v1/toolgroups/{toolgroup_id}",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform(
-                    {"toolgroup_id": toolgroup_id}, toolgroup_get_params.ToolgroupGetParams
-                ),
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ToolGroup,
         )
@@ -383,7 +384,7 @@ class AsyncToolgroupsResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._post(
-            "/alpha/toolgroups/register",
+            "/v1/toolgroups",
             body=await async_maybe_transform(
                 {
                     "provider_id": provider_id,
@@ -401,8 +402,8 @@ class AsyncToolgroupsResource(AsyncAPIResource):
 
     async def unregister(
         self,
+        toolgroup_id: str,
         *,
-        tool_group_id: str,
         x_llama_stack_client_version: str | NotGiven = NOT_GIVEN,
         x_llama_stack_provider_data: str | NotGiven = NOT_GIVEN,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -424,6 +425,8 @@ class AsyncToolgroupsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        if not toolgroup_id:
+            raise ValueError(f"Expected a non-empty value for `toolgroup_id` but received {toolgroup_id!r}")
         extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         extra_headers = {
             **strip_not_given(
@@ -434,11 +437,8 @@ class AsyncToolgroupsResource(AsyncAPIResource):
             ),
             **(extra_headers or {}),
         }
-        return await self._post(
-            "/alpha/toolgroups/unregister",
-            body=await async_maybe_transform(
-                {"tool_group_id": tool_group_id}, toolgroup_unregister_params.ToolgroupUnregisterParams
-            ),
+        return await self._delete(
+            f"/v1/toolgroups/{toolgroup_id}",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),

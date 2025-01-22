@@ -30,6 +30,7 @@ from .._response import (
 from .._streaming import Stream, AsyncStream
 from .._base_client import make_request_options
 from ..types.embeddings_response import EmbeddingsResponse
+from ..types.shared_params.message import Message
 from ..types.inference_completion_response import InferenceCompletionResponse
 from ..types.shared_params.sampling_params import SamplingParams
 from ..types.shared_params.interleaved_content import InterleavedContent
@@ -42,7 +43,7 @@ class InferenceResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> InferenceResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -62,7 +63,7 @@ class InferenceResource(SyncAPIResource):
     def chat_completion(
         self,
         *,
-        messages: Iterable[inference_chat_completion_params.Message],
+        messages: Iterable[Message],
         model_id: str,
         logprobs: inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
         response_format: inference_chat_completion_params.ResponseFormat | NotGiven = NOT_GIVEN,
@@ -106,7 +107,7 @@ class InferenceResource(SyncAPIResource):
     def chat_completion(
         self,
         *,
-        messages: Iterable[inference_chat_completion_params.Message],
+        messages: Iterable[Message],
         model_id: str,
         stream: Literal[True],
         logprobs: inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
@@ -150,7 +151,7 @@ class InferenceResource(SyncAPIResource):
     def chat_completion(
         self,
         *,
-        messages: Iterable[inference_chat_completion_params.Message],
+        messages: Iterable[Message],
         model_id: str,
         stream: bool,
         logprobs: inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
@@ -194,7 +195,7 @@ class InferenceResource(SyncAPIResource):
     def chat_completion(
         self,
         *,
-        messages: Iterable[inference_chat_completion_params.Message],
+        messages: Iterable[Message],
         model_id: str,
         logprobs: inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
         response_format: inference_chat_completion_params.ResponseFormat | NotGiven = NOT_GIVEN,
@@ -225,7 +226,7 @@ class InferenceResource(SyncAPIResource):
         return cast(
             InferenceChatCompletionResponse,
             self._post(
-                "/alpha/inference/chat-completion",
+                "/v1/inference/chat-completion",
                 body=maybe_transform(
                     {
                         "messages": messages,
@@ -376,7 +377,7 @@ class InferenceResource(SyncAPIResource):
         return cast(
             InferenceCompletionResponse,
             self._post(
-                "/alpha/inference/completion",
+                "/v1/inference/completion",
                 body=maybe_transform(
                     {
                         "content": content,
@@ -433,7 +434,7 @@ class InferenceResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._post(
-            "/alpha/inference/embeddings",
+            "/v1/inference/embeddings",
             body=maybe_transform(
                 {
                     "contents": contents,
@@ -452,7 +453,7 @@ class AsyncInferenceResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncInferenceResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -472,7 +473,7 @@ class AsyncInferenceResource(AsyncAPIResource):
     async def chat_completion(
         self,
         *,
-        messages: Iterable[inference_chat_completion_params.Message],
+        messages: Iterable[Message],
         model_id: str,
         logprobs: inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
         response_format: inference_chat_completion_params.ResponseFormat | NotGiven = NOT_GIVEN,
@@ -516,7 +517,7 @@ class AsyncInferenceResource(AsyncAPIResource):
     async def chat_completion(
         self,
         *,
-        messages: Iterable[inference_chat_completion_params.Message],
+        messages: Iterable[Message],
         model_id: str,
         stream: Literal[True],
         logprobs: inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
@@ -560,7 +561,7 @@ class AsyncInferenceResource(AsyncAPIResource):
     async def chat_completion(
         self,
         *,
-        messages: Iterable[inference_chat_completion_params.Message],
+        messages: Iterable[Message],
         model_id: str,
         stream: bool,
         logprobs: inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
@@ -604,7 +605,7 @@ class AsyncInferenceResource(AsyncAPIResource):
     async def chat_completion(
         self,
         *,
-        messages: Iterable[inference_chat_completion_params.Message],
+        messages: Iterable[Message],
         model_id: str,
         logprobs: inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
         response_format: inference_chat_completion_params.ResponseFormat | NotGiven = NOT_GIVEN,
@@ -635,7 +636,7 @@ class AsyncInferenceResource(AsyncAPIResource):
         return cast(
             InferenceChatCompletionResponse,
             await self._post(
-                "/alpha/inference/chat-completion",
+                "/v1/inference/chat-completion",
                 body=await async_maybe_transform(
                     {
                         "messages": messages,
@@ -786,7 +787,7 @@ class AsyncInferenceResource(AsyncAPIResource):
         return cast(
             InferenceCompletionResponse,
             await self._post(
-                "/alpha/inference/completion",
+                "/v1/inference/completion",
                 body=await async_maybe_transform(
                     {
                         "content": content,
@@ -843,7 +844,7 @@ class AsyncInferenceResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._post(
-            "/alpha/inference/embeddings",
+            "/v1/inference/embeddings",
             body=await async_maybe_transform(
                 {
                     "contents": contents,

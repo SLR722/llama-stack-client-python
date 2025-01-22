@@ -23,6 +23,7 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
+from ..types.shared_params.message import Message
 from ..types.shared.batch_completion import BatchCompletion
 from ..types.shared_params.sampling_params import SamplingParams
 from ..types.shared_params.interleaved_content import InterleavedContent
@@ -35,7 +36,7 @@ class BatchInferenceResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> BatchInferenceResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -54,7 +55,7 @@ class BatchInferenceResource(SyncAPIResource):
     def chat_completion(
         self,
         *,
-        messages_batch: Iterable[Iterable[batch_inference_chat_completion_params.MessagesBatch]],
+        messages_batch: Iterable[Iterable[Message]],
         model: str,
         logprobs: batch_inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
         sampling_params: SamplingParams | NotGiven = NOT_GIVEN,
@@ -100,7 +101,7 @@ class BatchInferenceResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._post(
-            "/alpha/batch-inference/chat-completion",
+            "/v1/batch-inference/chat-completion",
             body=maybe_transform(
                 {
                     "messages_batch": messages_batch,
@@ -155,7 +156,7 @@ class BatchInferenceResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._post(
-            "/alpha/batch-inference/completion",
+            "/v1/batch-inference/completion",
             body=maybe_transform(
                 {
                     "content_batch": content_batch,
@@ -176,7 +177,7 @@ class AsyncBatchInferenceResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncBatchInferenceResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -195,7 +196,7 @@ class AsyncBatchInferenceResource(AsyncAPIResource):
     async def chat_completion(
         self,
         *,
-        messages_batch: Iterable[Iterable[batch_inference_chat_completion_params.MessagesBatch]],
+        messages_batch: Iterable[Iterable[Message]],
         model: str,
         logprobs: batch_inference_chat_completion_params.Logprobs | NotGiven = NOT_GIVEN,
         sampling_params: SamplingParams | NotGiven = NOT_GIVEN,
@@ -241,7 +242,7 @@ class AsyncBatchInferenceResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._post(
-            "/alpha/batch-inference/chat-completion",
+            "/v1/batch-inference/chat-completion",
             body=await async_maybe_transform(
                 {
                     "messages_batch": messages_batch,
@@ -296,7 +297,7 @@ class AsyncBatchInferenceResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._post(
-            "/alpha/batch-inference/completion",
+            "/v1/batch-inference/completion",
             body=await async_maybe_transform(
                 {
                     "content_batch": content_batch,

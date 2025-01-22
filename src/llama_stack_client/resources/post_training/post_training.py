@@ -43,7 +43,7 @@ class PostTrainingResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> PostTrainingResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -97,7 +97,7 @@ class PostTrainingResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._post(
-            "/alpha/post-training/preference-optimize",
+            "/v1/post-training/preference-optimize",
             body=maybe_transform(
                 {
                     "algorithm_config": algorithm_config,
@@ -154,7 +154,7 @@ class PostTrainingResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._post(
-            "/alpha/post-training/supervised-fine-tune",
+            "/v1/post-training/supervised-fine-tune",
             body=maybe_transform(
                 {
                     "hyperparam_search_config": hyperparam_search_config,
@@ -182,7 +182,7 @@ class AsyncPostTrainingResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncPostTrainingResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -236,7 +236,7 @@ class AsyncPostTrainingResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._post(
-            "/alpha/post-training/preference-optimize",
+            "/v1/post-training/preference-optimize",
             body=await async_maybe_transform(
                 {
                     "algorithm_config": algorithm_config,
@@ -293,7 +293,7 @@ class AsyncPostTrainingResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._post(
-            "/alpha/post-training/supervised-fine-tune",
+            "/v1/post-training/supervised-fine-tune",
             body=await async_maybe_transform(
                 {
                     "hyperparam_search_config": hyperparam_search_config,

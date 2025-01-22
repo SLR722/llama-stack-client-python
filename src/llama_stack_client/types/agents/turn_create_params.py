@@ -17,6 +17,7 @@ __all__ = [
     "Document",
     "DocumentContent",
     "DocumentContentImageContentItem",
+    "DocumentContentImageContentItemImage",
     "DocumentContentTextContentItem",
     "Toolgroup",
     "ToolgroupUnionMember1",
@@ -30,8 +31,6 @@ class TurnCreateParamsBase(TypedDict, total=False):
 
     messages: Required[Iterable[Message]]
 
-    session_id: Required[str]
-
     documents: Iterable[Document]
 
     toolgroups: List[Toolgroup]
@@ -44,12 +43,16 @@ class TurnCreateParamsBase(TypedDict, total=False):
 Message: TypeAlias = Union[UserMessage, ToolResponseMessage]
 
 
-class DocumentContentImageContentItem(TypedDict, total=False):
-    type: Required[Literal["image"]]
-
+class DocumentContentImageContentItemImage(TypedDict, total=False):
     data: str
 
     url: URL
+
+
+class DocumentContentImageContentItem(TypedDict, total=False):
+    image: Required[DocumentContentImageContentItemImage]
+
+    type: Required[Literal["image"]]
 
 
 class DocumentContentTextContentItem(TypedDict, total=False):

@@ -11,7 +11,7 @@ __all__ = ["ToolRuntimeInvokeToolParams"]
 
 
 class ToolRuntimeInvokeToolParams(TypedDict, total=False):
-    args: Required[Dict[str, Union[bool, float, str, Iterable[object], object, None]]]
+    kwargs: Required[Dict[str, Union[bool, float, str, Iterable[object], object, None]]]
 
     tool_name: Required[str]
 

@@ -31,7 +31,7 @@ class DatasetioResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> DatasetioResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -82,7 +82,7 @@ class DatasetioResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._post(
-            "/alpha/datasetio/append-rows",
+            "/v1/datasetio/rows",
             body=maybe_transform(
                 {
                     "dataset_id": dataset_id,
@@ -132,7 +132,7 @@ class DatasetioResource(SyncAPIResource):
             **(extra_headers or {}),
         }
         return self._get(
-            "/alpha/datasetio/get-rows-paginated",
+            "/v1/datasetio/rows",
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -156,7 +156,7 @@ class AsyncDatasetioResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncDatasetioResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return the
+        This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/stainless-sdks/llama-stack-python#accessing-raw-response-data-eg-headers
@@ -207,7 +207,7 @@ class AsyncDatasetioResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._post(
-            "/alpha/datasetio/append-rows",
+            "/v1/datasetio/rows",
             body=await async_maybe_transform(
                 {
                     "dataset_id": dataset_id,
@@ -257,7 +257,7 @@ class AsyncDatasetioResource(AsyncAPIResource):
             **(extra_headers or {}),
         }
         return await self._get(
-            "/alpha/datasetio/get-rows-paginated",
+            "/v1/datasetio/rows",
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
